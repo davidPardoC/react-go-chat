@@ -16,3 +16,9 @@ cp .env.example .env
 ```bash
 docker run --name pg-chat -e POSTGRES_PASSWORD=example -p 5432:5432 -d postgres
 ```
+
+3. Start Go App.
+
+```bash
+go run ./cmd/chat/main.go
+```

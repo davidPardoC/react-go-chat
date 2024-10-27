@@ -1,8 +1,8 @@
-### Realtime Chat App with React and Go
+# Realtime Chat App with React and Go
 
 ## Develop
 
-# Backend:
+### Backend:
 
 1. Setup enviroment variables.
 

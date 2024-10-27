@@ -9,11 +9,11 @@ type AuthService struct {
 	userRepo repository.IUserRepository
 }
 
-func NewAuthService(userRepo repository.IUserRepository) *AuthService {
-	return &AuthService{}
+func NewAuthService(userRepo repository.IUserRepository) AuthService {
+	return AuthService{}
 }
 
 func (s *AuthService) LoginUser(email string, password string) *model.User {
-	user := s.userRepo.GetUserByEmail(email)
+	user, _ := s.userRepo.GetUserByEmail(email)
 	return user
 }

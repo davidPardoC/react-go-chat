@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 
-	"github.com/davidPardoC/go-chat/internal/api/webscoket"
+	"github.com/davidPardoC/go-chat/cmd/chat/handlers/api"
+	"github.com/davidPardoC/go-chat/cmd/chat/handlers/websocket"
 )
 
 func main() {
 	fmt.Println("Starting chat app")
-	webscoket.StartWebSocketServer()
+	websocket.StartWebSocketServer()
+	api.StartHttpServer()
 }

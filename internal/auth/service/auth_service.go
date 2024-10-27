@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/davidPardoC/go-chat/pkg/user/model"
-	"github.com/davidPardoC/go-chat/pkg/user/repository"
+	"github.com/davidPardoC/go-chat/internal/user/model"
+	"github.com/davidPardoC/go-chat/internal/user/repository"
 )
 
 type AuthService struct {

@@ -43,6 +43,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StartWebSocketServer() {
+	fmt.Println("Starting - WEBSOCKET")
 	http.HandleFunc("/ws", wsHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8888", nil))
 }

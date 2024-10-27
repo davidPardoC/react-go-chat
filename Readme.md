@@ -5,8 +5,9 @@
 # Backend:
 
 1. Setup enviroment variables.
-   bash```
-   cp .env.example .env
+
+bash```
+cp .env.example .env
 
 ````
 

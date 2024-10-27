@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
@@ -20,8 +21,8 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: checkOrigin,
 }
 
-func wsHandler(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
+func wsHandler(ctx *gin.Context) {
+	c, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
 		return
@@ -42,8 +43,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func StartWebSocketServer() {
+func StartWebSocketServer(r *gin.Engine) {
 	fmt.Println("Starting - WEBSOCKET")
-	http.HandleFunc("/ws", wsHandler)
-	log.Fatal(http.ListenAndServe(":8888", nil))
+	r.GET("/ws", func(c *gin.Context) {
+		wsHandler(c)
+	})
 }

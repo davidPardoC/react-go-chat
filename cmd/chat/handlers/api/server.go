@@ -1,18 +1,14 @@
 package api
 
 import (
-	"fmt"
-
+	"github.com/davidPardoC/go-chat/cmd/chat/handlers/api/router"
+	"github.com/davidPardoC/go-chat/cmd/chat/handlers/websocket"
 	"github.com/gin-gonic/gin"
 )
 
 func StartHttpServer() {
-	fmt.Println("Starting - API")
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run()
+	router.SetHealthRouter(r)
+	websocket.StartWebSocketServer(r)
+	r.Run(":5000")
 }

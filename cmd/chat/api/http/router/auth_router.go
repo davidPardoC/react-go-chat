@@ -5,11 +5,12 @@ import (
 	"github.com/davidPardoC/go-chat/internal/auth/service"
 	"github.com/davidPardoC/go-chat/internal/user/repository"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func SetAuthRouter(r *gin.Engine) {
+func SetAuthRouter(r *gin.Engine, db *gorm.DB) {
 
-	userRepo := repository.NewUserRepository()
+	userRepo := repository.NewUserRepository(db)
 	authService := service.NewAuthService(userRepo)
 	handler := handlers.NewAuthHandler(authService)
 

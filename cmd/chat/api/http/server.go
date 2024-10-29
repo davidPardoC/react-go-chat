@@ -4,13 +4,22 @@ import (
 	"github.com/davidPardoC/go-chat/cmd/chat/api/http/router"
 	"github.com/davidPardoC/go-chat/cmd/chat/api/websocket"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func StartHttpServer() {
+type ServerApp struct {
+	db *gorm.DB
+}
+
+func NewServerApp(db *gorm.DB) *ServerApp {
+	return &ServerApp{db: db}
+}
+
+func (a *ServerApp) StartHttpServer() {
 	r := gin.Default()
 
 	router.SetHealthRouter(r)
-	router.SetAuthRouter(r)
+	router.SetAuthRouter(r, a.db)
 
 	websocket.StartWebSocketServer(r)
 

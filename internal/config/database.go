@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	user "github.com/davidPardoC/go-chat/internal/user/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,4 +17,8 @@ func ConectDatabase(config Config) (*gorm.DB, error) {
 		config.Database.Port,
 	)
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+}
+
+func AutomigrateDatabase(db *gorm.DB) {
+	db.AutoMigrate(&user.User{})
 }

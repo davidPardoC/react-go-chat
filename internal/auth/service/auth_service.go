@@ -2,7 +2,6 @@ package service
 
 import (
 	"database/sql"
-	"net/http"
 	"time"
 
 	"github.com/davidPardoC/go-chat/cmd/chat/api/http/dtos"
@@ -62,9 +61,6 @@ func (s *AuthService) LoginUser(email string, password string) (*model.Credentia
 
 	s.userRepo.UpdateRefresToken(*user, refreshToken)
 
-	if err != nil {
-		return nil, errs.NewError(http.StatusInternalServerError, err.Error())
-	}
 	return &model.Credentials{AccesToken: accesToken, RefreshToken: refreshToken}, nil
 }
 

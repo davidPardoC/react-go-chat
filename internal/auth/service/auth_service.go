@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/davidPardoC/go-chat/cmd/chat/api/http/dtos"
@@ -11,6 +12,7 @@ import (
 	"github.com/davidPardoC/go-chat/pkg/errs"
 	"github.com/davidPardoC/go-chat/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 
 	userModels "github.com/davidPardoC/go-chat/internal/user/model"
 )
@@ -64,15 +66,15 @@ func (s *AuthService) LoginUser(email string, password string) (*model.Credentia
 	return &model.Credentials{AccesToken: accesToken, RefreshToken: refreshToken}, nil
 }
 
-func (s *AuthService) SignupUser(signupDto dtos.SignUpDto) (*userModels.User, error) {
-	hashedPassword, err := utils.HashPassword(signupDto.Password)
-
-	if err != nil {
-		return nil, err
-	}
+func (s *AuthService) SignupUser(signupDto dtos.SignUpDto) (*userModels.User, *errs.Error) {
+	hashedPassword, _ := utils.HashPassword(signupDto.Password)
 
 	user := userModels.User{Username: signupDto.Username, Email: signupDto.Email, Password: hashedPassword}
 	resul, err := s.userRepo.CreateUser(&user)
 
-	return resul.WithoutPassword(), err
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return nil, errs.NewConflictError("Email alredy in use")
+	}
+
+	return resul.WithoutPassword(), nil
 }

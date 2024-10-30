@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/davidPardoC/go-chat/cmd/chat/api/http/dtos"
@@ -28,8 +27,7 @@ func (h *AuthHandler) SignupHandler(c *gin.Context) {
 	user, err := h.authServcices.SignupUser(signUp)
 
 	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(err.StatusCode, err.Message)
 		return
 	}
 

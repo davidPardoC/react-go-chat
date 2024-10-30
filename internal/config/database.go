@@ -16,7 +16,7 @@ func ConectDatabase(config Config) (*gorm.DB, error) {
 		config.Database.Database,
 		config.Database.Port,
 	)
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{TranslateError: true})
 }
 
 func AutomigrateDatabase(db *gorm.DB) {

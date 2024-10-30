@@ -10,7 +10,10 @@ import (
 )
 
 func checkOrigin(r *http.Request) bool {
-	return true
+	values := r.URL.Query()
+	token := values.Get("token")
+
+	return token != ""
 }
 
 var upgrader = websocket.Upgrader{

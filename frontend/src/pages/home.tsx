@@ -8,6 +8,10 @@ export const HomePage = () => {
     console.log("Connected to websocket");
   };
 
+  socket.onerror = (error) => {
+    console.error("Websocket error", error);
+  };
+
   return (
     <div>
       <Button

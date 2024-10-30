@@ -6,9 +6,9 @@ import (
 )
 
 type User struct {
-	ID           uint           `json:"id" gorm:"primaryKey`
-	Username     string         `json:"username,omitempty"`
-	Email        string         `json:"email,omitempty"`
+	ID           uint           `json:"id" gorm:"primaryKey"`
+	Username     string         `json:"username,omitempty" gorm:"unique"`
+	Email        string         `json:"email,omitempty" gorm:"unique"`
 	Password     string         `json:"password,omitempty"`
 	RefreshToken sql.NullString `json:"refresh_token"`
 	CreatedAt    time.Time      `json:"created_at"`

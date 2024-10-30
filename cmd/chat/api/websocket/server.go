@@ -10,10 +10,6 @@ import (
 )
 
 func checkOrigin(r *http.Request) bool {
-	fmt.Println("Authorizing")
-	if r.Header.Get("authorization") == "" {
-		return false
-	}
 	return true
 }
 

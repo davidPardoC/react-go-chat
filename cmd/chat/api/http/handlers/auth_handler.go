@@ -27,7 +27,7 @@ func (h *AuthHandler) SignupHandler(c *gin.Context) {
 	user, err := h.authServcices.SignupUser(signUp)
 
 	if err != nil {
-		c.JSON(err.StatusCode, err.Message)
+		c.JSON(err.StatusCode, gin.H{"error": err.Message})
 		return
 	}
 

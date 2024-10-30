@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/davidPardoC/go-chat/cmd/chat/api/http/router"
 	"github.com/davidPardoC/go-chat/cmd/chat/api/websocket"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -17,6 +18,8 @@ func NewServerApp(db *gorm.DB) *ServerApp {
 
 func (a *ServerApp) StartHttpServer() {
 	r := gin.Default()
+
+	r.Use(cors.Default())
 
 	router.SetHealthRouter(r)
 	router.SetAuthRouter(r, a.db)

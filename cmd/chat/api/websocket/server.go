@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/davidPardoC/go-chat/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -13,7 +14,9 @@ func checkOrigin(r *http.Request) bool {
 	values := r.URL.Query()
 	token := values.Get("token")
 
-	return token != ""
+	isValid, _ := utils.IsTokenValid(token)
+
+	return isValid
 }
 
 var upgrader = websocket.Upgrader{

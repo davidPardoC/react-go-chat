@@ -23,6 +23,7 @@ func (a *ServerApp) StartHttpServer() {
 
 	router.SetHealthRouter(r)
 	router.SetAuthRouter(r, a.db)
+	router.SetUsersRouter(r, a.db)
 
 	websocket.StartWebSocketServer(r)
 

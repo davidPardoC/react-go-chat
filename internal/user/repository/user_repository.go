@@ -31,3 +31,9 @@ func (r *UserRepository) UpdateRefresToken(user model.User, refreshToken string)
 	result := r.db.Model(&user).Update("refresh_token", refreshToken)
 	return user, result.Error
 }
+
+func (r *UserRepository) FindAll() ([]model.User, error) {
+	var users []model.User
+	result := r.db.Find(&users)
+	return users, result.Error
+}

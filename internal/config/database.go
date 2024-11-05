@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	chat "github.com/davidPardoC/go-chat/internal/chat/model"
 	user "github.com/davidPardoC/go-chat/internal/user/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -20,5 +21,5 @@ func ConectDatabase(config Config) (*gorm.DB, error) {
 }
 
 func AutomigrateDatabase(db *gorm.DB) {
-	db.AutoMigrate(&user.User{})
+	db.AutoMigrate(&user.User{}, &chat.Chat{}, &chat.Messages{}, &chat.ChatMembers{})
 }

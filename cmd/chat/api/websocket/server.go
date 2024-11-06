@@ -1,10 +1,10 @@
 package websocket
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/davidPardoC/go-chat/internal/chat/model"
 	"github.com/davidPardoC/go-chat/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -23,31 +23,24 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: checkOrigin,
 }
 
-func wsHandler(ctx *gin.Context) {
+func wsHandler(ctx *gin.Context, hub *model.Hub) {
 	c, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		log.Print("upgrade error:", err)
 		return
 	}
 	defer c.Close()
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, []byte("message mi bro"))
-		if err != nil {
-			log.Println("write:", err)
-			break
-		}
-	}
+	client := &model.Client{Hub: hub, Conn: c, Send: make(chan []byte, 256)}
+	client.Hub.Register <- client
+
+	go client.Read()
+	go client.Write()
 }
 
 func StartWebSocketServer(r *gin.Engine) {
-	fmt.Println("Starting - WEBSOCKET")
+	hub := model.NewHub()
+	go hub.Run()
 	r.GET("/ws", func(c *gin.Context) {
-		wsHandler(c)
+		wsHandler(c, hub)
 	})
 }

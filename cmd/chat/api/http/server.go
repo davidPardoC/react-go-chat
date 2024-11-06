@@ -27,5 +27,5 @@ func (a *ServerApp) StartHttpServer() {
 
 	websocket.StartWebSocketServer(r)
 
-	r.Run(":5000")
+	r.Run(":5500")
 }

@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/davidPardoC/go-chat/cmd/chat/api/http/dtos"
@@ -42,6 +43,7 @@ func (s *AuthService) LoginUser(email string, password string) (*model.Credentia
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 3)),
 			Issuer:    constants.TOKEN_ISSUER,
+			Subject:   fmt.Sprint(user.ID),
 		},
 	}
 

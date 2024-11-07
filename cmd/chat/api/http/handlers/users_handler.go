@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/davidPardoC/go-chat/internal/user/service"
@@ -16,6 +17,9 @@ func NewUsersHandler(userService *service.UserService) *UsersHandler {
 }
 
 func (h *UsersHandler) GetAll(c *gin.Context) {
-	users, _ := h.userService.GetAll()
+	users, err := h.userService.GetAll()
+	if err != nil {
+		fmt.Print(err)
+	}
 	c.JSON(http.StatusOK, users)
 }

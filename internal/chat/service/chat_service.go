@@ -1,13 +1,11 @@
 package service
 
-import "github.com/davidPardoC/go-chat/internal/chat/repository"
+import userRepo "github.com/davidPardoC/go-chat/internal/user/repository"
 
 type ChatService struct {
-	chatRepository *repository.IChatRepository
+	userRepository *userRepo.IUserRepository
 }
 
-func NewChatService(chatRepository *repository.IChatRepository) *ChatService {
-	return &ChatService{chatRepository: chatRepository}
+func NewChatService(userRepository *userRepo.IUserRepository) *ChatService {
+	return &ChatService{}
 }
-
-func (s *ChatService) CreateNew() {}

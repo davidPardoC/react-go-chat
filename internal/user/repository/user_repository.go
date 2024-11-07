@@ -33,7 +33,7 @@ func (r *UserRepository) UpdateRefresToken(user model.User, refreshToken string)
 }
 
 func (r *UserRepository) FindAll() ([]model.User, error) {
-	var users []model.User
+	users := []model.User{}
 	result := r.db.Find(&users)
 	return users, result.Error
 }

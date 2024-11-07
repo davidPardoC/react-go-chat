@@ -18,7 +18,7 @@ func SignToken(claims JwtClaims) (string, error) {
 	return token.SignedString([]byte(constants.TOKEN_SECRET))
 }
 
-func IsTokenValid(tokenString string) (isValid bool, claims *jwt.MapClaims) {
+func IsTokenValid(tokenString string) (isValid bool, claims jwt.MapClaims) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected string token")
@@ -31,7 +31,7 @@ func IsTokenValid(tokenString string) (isValid bool, claims *jwt.MapClaims) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		return true, &claims
+		return true, claims
 	}
 	return false, nil
 }

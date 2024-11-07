@@ -15,7 +15,7 @@ func NewUserService(userRepository repository.IUserRepository) *UserService {
 
 func (s *UserService) GetAll() ([]model.User, error) {
 	users, err := s.userRepository.FindAll()
-	var mappedUsers []model.User
+	mappedUsers := []model.User{}
 	for _, user := range users {
 		mappedUsers = append(mappedUsers, *user.WithoutPassword().RemoveRefreshToken())
 	}

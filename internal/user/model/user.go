@@ -3,8 +3,6 @@ package model
 import (
 	"database/sql"
 	"time"
-
-	"github.com/davidPardoC/go-chat/internal/chat/model"
 )
 
 type User struct {
@@ -15,7 +13,6 @@ type User struct {
 	RefreshToken sql.NullString `json:"refresh_token"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
-	ChatMember   model.ChatMembers
 }
 
 func (u *User) WithoutPassword() *User {

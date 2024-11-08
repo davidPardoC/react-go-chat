@@ -9,4 +9,5 @@ type IUserRepository interface {
 	CreateUser(user *model.User) (*model.User, error)
 	UpdateRefresToken(user model.User, refreshToken string) (model.User, error)
 	FindAll() ([]model.User, error)
+	FindById(ID uint) (model.User, error)
 }

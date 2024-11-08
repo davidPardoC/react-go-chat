@@ -16,16 +16,16 @@ func NewServerApp(db *gorm.DB) *ServerApp {
 	return &ServerApp{db: db}
 }
 
-func (a *ServerApp) StartHttpServer() {
+func (app *ServerApp) StartHttpServer() {
 	r := gin.Default()
 
 	r.Use(cors.Default())
 
 	router.SetHealthRouter(r)
-	router.SetAuthRouter(r, a.db)
-	router.SetUsersRouter(r, a.db)
+	router.SetAuthRouter(r, app.db)
+	router.SetUsersRouter(r, app.db)
 
-	websocket.StartWebSocketServer(r)
+	websocket.StartWebSocketServer(r, app.db)
 
 	r.Run(":5500")
 }

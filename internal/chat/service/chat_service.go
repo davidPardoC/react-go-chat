@@ -5,18 +5,24 @@ import (
 	"log"
 
 	"github.com/davidPardoC/go-chat/cmd/chat/api/websocket/dtos"
+	"github.com/davidPardoC/go-chat/internal/chat/model"
+	"github.com/davidPardoC/go-chat/internal/chat/repository"
 	userRepo "github.com/davidPardoC/go-chat/internal/user/repository"
 )
 
 type ChatService struct {
-	userRepository userRepo.IUserRepository
+	userRepository    userRepo.IUserRepository
+	messageRepository repository.IMessageRepository
 }
 
-func NewChatService(userRepository userRepo.IUserRepository) *ChatService {
-	return &ChatService{userRepository: userRepository}
+func NewChatService(userRepository userRepo.IUserRepository, messageRepository repository.IMessageRepository) *ChatService {
+	return &ChatService{
+		userRepository:    userRepository,
+		messageRepository: messageRepository,
+	}
 }
 
-func (s *ChatService) HandleTextMessage(chatEvent dtos.ChatEvent) {
+func (s *ChatService) HandleTextMessage(chatEvent dtos.ChatEvent, userID uint) {
 	fmt.Printf("%v\n", chatEvent)
 	receiver := Clients[uint(chatEvent.ReceiverId)]
 
@@ -25,8 +31,13 @@ func (s *ChatService) HandleTextMessage(chatEvent dtos.ChatEvent) {
 		return
 	}
 
-	var result = make(map[string]interface{})
-	result["message"] = chatEvent.MessageText
-	result["sender_id"] = 1234
-	receiver.Conn.WriteJSON(result)
+	message := model.Message{ChatID: uint(chatEvent.ChatId), MessageText: chatEvent.MessageText, Read: false, UserID: userID}
+
+	savedMessage, err := s.messageRepository.Create(message)
+
+	if err != nil {
+		log.Printf("Cannot save and send message %v due to %v\n", savedMessage, err)
+	}
+
+	receiver.Conn.WriteJSON(savedMessage)
 }

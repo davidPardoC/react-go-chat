@@ -92,7 +92,7 @@ func (h *WsHandler) HandleMessages() {
 			if err != nil {
 				log.Printf("Error unmarshaling %v\n", msg)
 			}
-			h.chatService.HandleTextMessage(chatEvent)
+			h.chatService.HandleTextMessage(chatEvent, msg.UserID)
 
 		default:
 			fmt.Println("Received unknown event type")

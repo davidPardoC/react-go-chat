@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var Clients = make(map[uint]model.Client)
+var Clients = make(map[int]model.Client)
 
 type WebsocketService struct {
 	userRepo repository.IUserRepository
@@ -21,6 +21,6 @@ func NewWebsocketService(userRepo repository.IUserRepository) *WebsocketService 
 func (s *WebsocketService) RegisterClient(userId uint, conn *websocket.Conn) {
 	user, _ := s.userRepo.FindById(userId)
 	newClient := model.Client{User: &user, Conn: conn}
-	Clients[user.ID] = newClient
+	Clients[int(user.ID)] = newClient
 	fmt.Printf("%v", Clients)
 }

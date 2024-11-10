@@ -1,9 +1,10 @@
 package model
 
-import "gorm.io/gorm"
+import "time"
 
 type Chat struct {
-	gorm.Model
-	Messages []Message
-	Members  []ChatMembers
+	ID        uint      `json:"id" gorm:"primaryKey,index"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Messages  []Message
 }

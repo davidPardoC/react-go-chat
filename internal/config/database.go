@@ -21,5 +21,5 @@ func ConectDatabase(config Config) (*gorm.DB, error) {
 }
 
 func AutomigrateDatabase(db *gorm.DB) {
-	db.AutoMigrate(&user.User{}, &chat.Chat{}, &chat.Message{}, &chat.ChatMembers{})
+	db.AutoMigrate(&user.User{}, &chat.Chat{}, &chat.Message{}, &chat.ChatMember{})
 }

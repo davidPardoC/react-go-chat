@@ -22,9 +22,15 @@ func (r *ChatRepository) Create() (model.Chat, error) {
 }
 
 func (r *ChatRepository) FindById(chatId uint) (model.Chat, error) {
-	chat := model.Chat{Model: gorm.Model{ID: chatId}}
+	chat := model.Chat{}
 
-	result := r.db.First(&chat)
+	result := r.db.Where("id = ? ", chatId).First(&chat)
 
 	return chat, result.Error
+}
+
+func (r *ChatRepository) GetChatByUsersID(userId1 uint, userId2 uint) (model.Chat, error) {
+	message := model.Chat{}
+
+	return message, nil
 }

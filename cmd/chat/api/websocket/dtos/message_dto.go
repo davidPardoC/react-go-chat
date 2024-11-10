@@ -10,6 +10,6 @@ type MessageDTO struct {
 
 type ChatEvent struct {
 	MessageText string `json:"message_text"`
-	ReceiverId  int    `json:"receiver_id"`
+	RecipientID int    `json:"recipient_id"`
 	ChatId      int    `json:"chat_id"`
 }

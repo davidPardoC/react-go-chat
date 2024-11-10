@@ -13,8 +13,12 @@ func StartWebSocketServer(r *gin.Engine, db *gorm.DB) {
 
 	userRepo := userRepo.NewUserRepository(db)
 	messagesRepo := repository.NewMessageRepository(db)
+	chatRepo := repository.NewChatRepository(db)
+	chatMemberRepo := repository.NewChatMemberRepository(db)
+
+	chatService := service.NewChatService(userRepo, messagesRepo, chatRepo, chatMemberRepo)
 	websocketService := service.NewWebsocketService(userRepo)
-	chatService := service.NewChatService(userRepo, messagesRepo)
+
 	handler := handlers.NewWsHandler(websocketService, chatService)
 
 	go handler.HandleMessages()

@@ -111,8 +111,8 @@ func (s *ChatService) CreateChatWithMembers(senderID int, recipientId int) (*mod
 		return nil, err
 	}
 
-	senderMember := model.ChatMember{Chat: chat, User: sender}
-	recipientMember := model.ChatMember{Chat: chat, User: recipient}
+	senderMember := model.ChatMember{Chat: chat, UserID: sender.ID}
+	recipientMember := model.ChatMember{Chat: chat, UserID: recipient.ID}
 
 	s.chatMemberRepository.Create(senderMember)
 	s.chatMemberRepository.Create(recipientMember)

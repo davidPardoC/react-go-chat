@@ -20,7 +20,7 @@ func NewWebsocketService(userRepo repository.IUserRepository) *WebsocketService 
 
 func (s *WebsocketService) RegisterClient(userId uint, conn *websocket.Conn) {
 	user, _ := s.userRepo.FindById(userId)
-	newClient := model.Client{User: &user, Conn: conn}
+	newClient := model.Client{Conn: conn}
 	Clients[int(user.ID)] = newClient
 	fmt.Printf("Clients: %v", Clients)
 }

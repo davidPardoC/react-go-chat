@@ -22,5 +22,5 @@ func (s *WebsocketService) RegisterClient(userId uint, conn *websocket.Conn) {
 	user, _ := s.userRepo.FindById(userId)
 	newClient := model.Client{User: &user, Conn: conn}
 	Clients[int(user.ID)] = newClient
-	fmt.Printf("%v", Clients)
+	fmt.Printf("Clients: %v", Clients)
 }

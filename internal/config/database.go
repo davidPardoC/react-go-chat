@@ -7,6 +7,7 @@ import (
 	user "github.com/davidPardoC/go-chat/internal/user/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func ConectDatabase(config Config) (*gorm.DB, error) {
@@ -17,7 +18,10 @@ func ConectDatabase(config Config) (*gorm.DB, error) {
 		config.Database.Database,
 		config.Database.Port,
 	)
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{TranslateError: true})
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{
+		TranslateError: true,
+		Logger:         logger.Default.LogMode(logger.Info),
+	})
 }
 
 func AutomigrateDatabase(db *gorm.DB) {

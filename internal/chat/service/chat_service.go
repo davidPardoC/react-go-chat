@@ -119,3 +119,8 @@ func (s *ChatService) CreateChatWithMembers(senderID int, recipientId int) (*mod
 
 	return &chat, err
 }
+
+func (s *ChatService) GetUserChats(userId int) ([]model.Chat, error) {
+	chats, err := s.chatRepository.FindByUserId(userId)
+	return chats, err
+}

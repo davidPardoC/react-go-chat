@@ -29,8 +29,10 @@ func (r *ChatRepository) FindById(chatId uint) (model.Chat, error) {
 	return chat, result.Error
 }
 
-func (r *ChatRepository) GetChatByUsersID(userId1 uint, userId2 uint) (model.Chat, error) {
-	message := model.Chat{}
-
-	return message, nil
+func (r *ChatRepository) FindByUserId(userId int) ([]model.Chat, error) {
+	chats := []model.Chat{}
+	r.db.Model(&model.Chat{}).Preload("Messages", func(tx *gorm.DB) *gorm.DB {
+		return tx.Order("created_at DESC").Limit(1)
+	}).Joins("LEFT join chat_members on chat_members.user_id = ?", userId).Find(&chats)
+	return chats, nil
 }

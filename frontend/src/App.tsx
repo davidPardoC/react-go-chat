@@ -4,6 +4,7 @@ import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import { setAxiosDefaults } from "./utils/axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ProtectedRoute from "./components/ui/protected-route";
 
 setAxiosDefaults();
 
@@ -19,9 +20,9 @@ function App() {
         <Route path="/login">
           <LoginPage />
         </Route>
-        <Route path="/">
+        <ProtectedRoute path="/">
           <HomePage />
-        </Route>
+        </ProtectedRoute>
       </Switch>
     </QueryClientProvider>
   );

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/davidPardoC/go-chat/internal/chat/model"
+
 	"gorm.io/gorm"
 )
 
@@ -13,8 +14,7 @@ func NewChatRepository(db *gorm.DB) *ChatRepository {
 	return &ChatRepository{db: db}
 }
 
-func (r *ChatRepository) Create() (model.Chat, error) {
-	chat := model.Chat{}
+func (r *ChatRepository) Create(chat model.Chat) (model.Chat, error) {
 
 	result := r.db.Create(&chat)
 
@@ -29,10 +29,40 @@ func (r *ChatRepository) FindById(chatId uint) (model.Chat, error) {
 	return chat, result.Error
 }
 
-func (r *ChatRepository) FindByUserId(userId int) ([]model.Chat, error) {
-	chats := []model.Chat{}
-	r.db.Model(&model.Chat{}).Preload("Messages", func(tx *gorm.DB) *gorm.DB {
-		return tx.Order("created_at DESC").Limit(1)
-	}).Joins("LEFT join chat_members on chat_members.user_id = ?", userId).Find(&chats)
+func (r *ChatRepository) FindByUserId(userId int) ([]model.ApiChat, error) {
+	chats := []model.ApiChat{}
+	r.db.
+		Preload("Messages", func(tx *gorm.DB) *gorm.DB {
+			return tx.Order("created_at DESC").Limit(3)
+		}).
+		Preload("ChatMembers.User", func(tx *gorm.DB) *gorm.DB {
+			return tx.Select("id", "username")
+		}).
+		Model(&model.Chat{}).
+		Joins("LEFT join chat_members ON chat_members.chat_id = chats.id").
+		Where("user_id = ?", userId).Find(&chats)
+
 	return chats, nil
+}
+
+func (r *ChatRepository) GetByChatMembers(user1 int, user2 int) (model.Chat, error) {
+	var chat model.Chat
+
+	if user1 == user2 {
+		result := r.db.Table("chats").
+			Joins("JOIN chat_members ON chats.id = chat_members.chat_id").
+			Where("chat_members.user_id = ?", user1).Where("chats.is_self = ?", true).First(&chat)
+		return chat, result.Error
+	}
+
+	subquery := r.db.Table("chat_members").
+		Select("chat_id").
+		Where("user_id = ?", user1).
+		Where("chat_id IN (?)",
+			r.db.Table("chat_members").Select("chat_id").Where("user_id = ?", user2),
+		)
+
+	result := r.db.Table("chats").Where("id IN (?)", subquery).First(&chat)
+
+	return chat, result.Error
 }

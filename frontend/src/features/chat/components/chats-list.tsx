@@ -8,14 +8,14 @@ export const ChatsList = () => {
     queryFn: getUserChatList,
   });
   return (
-    <>
+    <div className="mt-2">
       {!isLoading && data && (
         <ul>
-          {data.map(({id}) => (
-            <li key={id}></li>
+          {data.map(({ id, messages }) => (
+            <li key={id}>{messages[0]?.message_text || ""}</li>
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 };

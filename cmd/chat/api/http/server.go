@@ -19,7 +19,12 @@ func NewServerApp(db *gorm.DB) *ServerApp {
 func (app *ServerApp) StartHttpServer() {
 	r := gin.Default()
 
-	r.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"HEAD", "OPTIONS", "GET", "POST", "PUT", "DELETE", "PATCH"}
+	config.AllowHeaders = []string{"Origin", "Authorization", "Content-Type", "Referer", "User-Agent"}
+	config.AllowCredentials = true
+	r.Use(cors.New(config))
 
 	router.SetHealthRouter(r)
 	router.SetAuthRouter(r, app.db)

@@ -22,6 +22,6 @@ func SetChatRouter(r *gin.Engine, db *gorm.DB) {
 
 	usersV1 := r.Group("/v1/chats")
 	{
-		usersV1.Use(middlewares.AuthMiddleware()).GET("/:user_id", handler.GetChatList)
+		usersV1.Use(middlewares.AuthMiddleware()).GET("/", handler.GetChatList)
 	}
 }

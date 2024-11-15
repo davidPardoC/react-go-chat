@@ -61,7 +61,7 @@ func (s *AuthService) LoginUser(email string, password string) (*model.Credentia
 		return nil, errs.NewUnauthorizedError("Invalid Credndetials")
 	}
 
-	user.RefreshToken = sql.NullString{String: refreshToken}
+	user.RefreshToken = &sql.NullString{String: refreshToken}
 
 	s.userRepo.UpdateRefresToken(*user, refreshToken)
 

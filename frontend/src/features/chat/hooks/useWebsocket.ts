@@ -5,5 +5,6 @@ export const useWebSocket = () => {
   const socket = new WebSocket(
     `ws://localhost:5500/ws?token=${credentials.acces_token}`
   );
+
   return socket;
 };

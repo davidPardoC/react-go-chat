@@ -15,6 +15,8 @@ cp .env.example .env
 
 ```bash
 docker run --name pg-chat -e POSTGRES_PASSWORD=example -p 5432:5432 -d postgres
+
+docker run --name some-redis -p 6379:6379 -d redis
 ```
 
 3. Start Go App.

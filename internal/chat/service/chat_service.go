@@ -10,6 +10,7 @@ import (
 	"github.com/davidPardoC/go-chat/internal/chat/model"
 	"github.com/davidPardoC/go-chat/internal/chat/repository"
 	userRepo "github.com/davidPardoC/go-chat/internal/user/repository"
+	"github.com/davidPardoC/go-chat/pkg/cache"
 	"github.com/davidPardoC/go-chat/pkg/constants"
 	"gorm.io/gorm"
 )
@@ -19,24 +20,27 @@ type ChatService struct {
 	messageRepository    repository.IMessageRepository
 	chatRepository       repository.IChatRepository
 	chatMemberRepository repository.IChatMemberRepository
+	cacheService         cache.ICacheService
 }
 
 func NewChatService(
 	userRepository userRepo.IUserRepository,
 	messageRepository repository.IMessageRepository,
 	chatRepository repository.IChatRepository,
-	chatMemberRepository repository.IChatMemberRepository) *ChatService {
+	chatMemberRepository repository.IChatMemberRepository,
+	cacheService cache.ICacheService) *ChatService {
 
 	return &ChatService{
 		userRepository:       userRepository,
 		messageRepository:    messageRepository,
 		chatRepository:       chatRepository,
 		chatMemberRepository: chatMemberRepository,
+		cacheService:         cacheService,
 	}
 }
 
-func (s *ChatService) CreateNew() (model.Chat, error) {
-	chat, err := s.chatRepository.Create()
+func (s *ChatService) CreateNew(chat model.Chat) (model.Chat, error) {
+	chat, err := s.chatRepository.Create(chat)
 	return chat, err
 }
 
@@ -44,14 +48,7 @@ func (s *ChatService) HandleTextMessage(chatEvent dtos.ChatEvent, userID uint) {
 	fmt.Printf("%v\n", chatEvent)
 	receiver := Clients[chatEvent.RecipientID]
 
-	if receiver.Conn == nil {
-		log.Printf("Not connection active for user with id %d \n", chatEvent.RecipientID)
-		return
-	}
-
-	chatMembersChat, err := s.chatMemberRepository.GetByChatMembers(int(userID), chatEvent.RecipientID)
-
-	chat := model.Chat{ID: chatMembersChat.ID}
+	chat, err := s.chatRepository.GetByChatMembers(int(userID), chatEvent.RecipientID)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		newChat, _ := s.CreateChatWithMembers(int(userID), chatEvent.RecipientID)
@@ -89,11 +86,16 @@ func (s *ChatService) HandleTextMessage(chatEvent dtos.ChatEvent, userID uint) {
 		Data:   json.RawMessage(data),
 	}
 
+	if receiver.Conn == nil {
+		log.Printf("Not connection active for user with id %d \n", chatEvent.RecipientID)
+		return
+	}
+
 	receiver.Conn.WriteJSON(outgoingMessage)
 }
 
 func (s *ChatService) CreateChatWithMembers(senderID int, recipientId int) (*model.Chat, error) {
-	chat, err := s.CreateNew()
+	chat, err := s.CreateNew(model.Chat{IsSelf: senderID == recipientId})
 
 	if err != nil {
 		return nil, err
@@ -114,13 +116,18 @@ func (s *ChatService) CreateChatWithMembers(senderID int, recipientId int) (*mod
 	senderMember := model.ChatMember{Chat: chat, UserID: sender.ID}
 	recipientMember := model.ChatMember{Chat: chat, UserID: recipient.ID}
 
+	if senderID == recipientId {
+		s.chatMemberRepository.Create(senderMember)
+		return &chat, err
+	}
+
 	s.chatMemberRepository.Create(senderMember)
 	s.chatMemberRepository.Create(recipientMember)
 
 	return &chat, err
 }
 
-func (s *ChatService) GetUserChats(userId int) ([]model.Chat, error) {
+func (s *ChatService) GetUserChats(userId int) ([]model.ApiChat, error) {
 	chats, err := s.chatRepository.FindByUserId(userId)
 	return chats, err
 }

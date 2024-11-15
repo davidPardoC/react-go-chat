@@ -1,27 +1,14 @@
 import { ChatsList } from "@/features/chat/components/chats-list";
-import { useWebSocket } from "@/features/chat/hooks/useWebsocket";
-import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import SearchUserModal from "@/features/chat/components/search-user-modal";
 
 export const HomePage = () => {
-
-  const socket = useWebSocket();
-
-  useEffect(()=>{
-    socket.onmessage = (event) => {
-      console.log("Message received from server", event.data);
-    };
-  },[socket])
-
-  socket.onopen = () => {
-    console.log("Connected to websocket");
-  };
-
-  socket.onerror = (error) => {
-    console.error("Websocket error", error);
-  };
-
   return (
-    <div className="flex p-5">
+    <div className="container p-2">
+      <div className="flex gap-2 w-full">
+        <Input placeholder="Search" className="w-full" />
+        <SearchUserModal />
+      </div>
       <ChatsList />
     </div>
   );

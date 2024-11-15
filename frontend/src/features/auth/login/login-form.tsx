@@ -16,8 +16,9 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "wouter";
-import { z } from "zod";
 import { loginUser } from "../services/auth.services";
+import { setAxiosDefaults } from "@/utils/axios";
+import { z } from "zod";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -31,15 +32,22 @@ export type LoginForm = z.infer<typeof formSchema>;
 export const LoginForm = () => {
   const form = useForm<LoginForm>({ resolver: zodResolver(formSchema) });
   const [, setLocation] = useLocation();
-  const [error, setError] = useState();
+  const [error, setError] = useState<string>();
 
   async function onSubmit(values: LoginForm) {
     try {
       const credentials = await loginUser(values);
       setCredentials(credentials);
+      setAxiosDefaults()
       setLocation("/");
-    } catch (error: any | AxiosError) {
-      setError(error.response.data.error);
+    } catch (error:unknown) {
+      const { response } = error as AxiosError;
+      if (response && response.data) {
+        const data = response.data as { error: string };
+        setError(data.error);
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   }
 

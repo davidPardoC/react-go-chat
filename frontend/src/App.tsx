@@ -5,6 +5,7 @@ import SignupPage from "./pages/signup";
 import { setAxiosDefaults } from "./utils/axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProtectedRoute from "./components/ui/protected-route";
+import ChatPage from "./pages/chat";
 
 setAxiosDefaults();
 
@@ -22,6 +23,9 @@ function App() {
         </Route>
         <ProtectedRoute path="/">
           <HomePage />
+        </ProtectedRoute>
+        <ProtectedRoute path="/chat">
+          <ChatPage />
         </ProtectedRoute>
       </Switch>
     </QueryClientProvider>

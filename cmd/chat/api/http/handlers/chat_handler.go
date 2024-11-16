@@ -25,18 +25,25 @@ func (h *ChatHandler) CreateChat(ctx *gin.Context) {
 func (h *ChatHandler) GetChatList(ctx *gin.Context) {
 	user := ctx.MustGet("user").(jwt.MapClaims)
 
-	var queryDto dtos.GetChatsUri
+	userId, _ := user.GetSubject()
+
+	userIdUint, _ := strconv.ParseUint(userId, 10, 32)
+
+	chats, _ := h.chatService.GetUserChats(int(userIdUint))
+
+	ctx.JSON(http.StatusOK, chats)
+}
+
+func (h *ChatHandler) GetFullChat(ctx *gin.Context) {
+
+	var queryDto dtos.GetFullChatUri
 
 	if err := ctx.ShouldBindUri(&queryDto); err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	userId, _ := user.GetSubject()
-
-	userIdUint, _ := strconv.ParseUint(userId, 10, 32)
-
-	chats, _ := h.chatService.GetUserChats(int(userIdUint))
+	chats, _ := h.chatService.GetFullChat(queryDto.ID)
 
 	ctx.JSON(http.StatusOK, chats)
 }

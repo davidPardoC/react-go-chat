@@ -12,6 +12,7 @@ import (
 	userRepo "github.com/davidPardoC/go-chat/internal/user/repository"
 	"github.com/davidPardoC/go-chat/pkg/cache"
 	"github.com/davidPardoC/go-chat/pkg/constants"
+	"github.com/davidPardoC/go-chat/pkg/errs"
 	"gorm.io/gorm"
 )
 
@@ -130,4 +131,14 @@ func (s *ChatService) CreateChatWithMembers(senderID int, recipientId int) (*mod
 func (s *ChatService) GetUserChats(userId int) ([]model.ApiChat, error) {
 	chats, err := s.chatRepository.FindByUserId(userId)
 	return chats, err
+}
+
+func (s *ChatService) GetFullChat(chatId int) (model.Chat, *errs.Error) {
+	chat, err := s.chatRepository.FindById(uint(chatId))
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return model.Chat{}, errs.NewNotFoundError("Chat not found")
+	}
+
+	return chat, nil
 }

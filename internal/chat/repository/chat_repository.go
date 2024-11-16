@@ -24,16 +24,21 @@ func (r *ChatRepository) Create(chat model.Chat) (model.Chat, error) {
 func (r *ChatRepository) FindById(chatId uint) (model.Chat, error) {
 	chat := model.Chat{}
 
-	result := r.db.Where("id = ? ", chatId).First(&chat)
+	result := r.db.Model(&model.Chat{}).Preload("Messages").Where("id = ? ", chatId).First(&chat)
 
 	return chat, result.Error
 }
 
 func (r *ChatRepository) FindByUserId(userId int) ([]model.ApiChat, error) {
 	chats := []model.ApiChat{}
+
+	subQuery := r.db.Table("messages").
+		Select("MAX(id) as id").
+		Group("chat_id")
+
 	r.db.
 		Preload("Messages", func(tx *gorm.DB) *gorm.DB {
-			return tx.Order("created_at DESC").Limit(3)
+			return tx.Where("id IN (?)", subQuery)
 		}).
 		Preload("ChatMembers.User", func(tx *gorm.DB) *gorm.DB {
 			return tx.Select("id", "username")

@@ -4,8 +4,8 @@ import SearchUserModal from "@/features/chat/components/search-user-modal";
 
 export const HomePage = () => {
   return (
-    <div className="container p-2">
-      <div className="flex gap-2 w-full">
+    <div className="container">
+      <div className="flex gap-2 w-full p-3">
         <Input placeholder="Search" className="w-full" />
         <SearchUserModal />
       </div>

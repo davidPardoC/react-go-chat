@@ -2,10 +2,13 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { FULL_CHAT } from "@/constants/cache";
 import { ChatMessage } from "@/features/chat/interfaces/message.interface";
+import { getFullChat } from "@/features/chat/services/chat.service";
 import { sendTextMessage } from "@/features/chat/services/realtime.chat.service";
 import { getCredentials } from "@/utils/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { SendHorizonal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,6 +24,13 @@ type FormValues = z.infer<typeof formSchema>;
 const ChatPage = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const recipientId = urlParams.get("recipient_id");
+  const chatId = urlParams.get("chat_id") as string;
+
+  const { data } = useQuery({
+    queryKey: [FULL_CHAT, chatId],
+    queryFn: () => getFullChat(parseInt(chatId)),
+  });
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
 
@@ -61,13 +71,22 @@ const ChatPage = () => {
   return (
     <div className="container">
       <div className="h-screen">
-        <div className="px-2">
+        <div className="px-2 max-h-[90vh] overflow-scroll">
+          {data &&
+            data.messages.map((message, index) => (
+              <div key={index} className="flex items-center gap-1 mt-4">
+                <Avatar>
+                  <AvatarFallback>S</AvatarFallback>
+                </Avatar>
+                <span className="p-1 bg-gray-200 w-max px-3 rounded-xl">
+                  {message.message_text}
+                </span>
+              </div>
+            ))}
           {messages.map((message, index) => (
             <div key={index} className="flex items-center gap-1 mt-4">
               <Avatar>
-                <AvatarFallback>
-                  S
-                </AvatarFallback>
+                <AvatarFallback>S</AvatarFallback>
               </Avatar>
               <span className="p-1 bg-gray-200 w-max px-3 rounded-xl">
                 {message.data.message_text}

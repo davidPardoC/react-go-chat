@@ -30,7 +30,12 @@ export const ChatsList = () => {
       {!isLoading && data && (
         <ul className="border-b-2">
           {data.map(({ id, messages, chat_members }) => (
-            <Link href={`/chat/?recipient_id=${findTheOtherUser(chat_members, currentUserId)?.user_id}`} key={id}>
+            <Link
+              href={`/chat/?recipient_id=${
+                findTheOtherUser(chat_members, currentUserId)?.user_id
+              }&chat_id=${chat_members[0].chat_id}`}
+              key={id}
+            >
               <li key={id} className="border-t-2 p-2 flex items-center gap-2">
                 <Avatar>
                   <AvatarFallback>
